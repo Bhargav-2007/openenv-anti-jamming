@@ -1,0 +1,24 @@
+# Core OpenEnv framework
+openenv>=0.1.0
+
+# Data handling and computation
+numpy==1.26.4
+scipy==1.13.0
+pydantic==2.10.3
+
+# LLM integration
+openai==1.58.1
+
+# Visualization (optional, for analysis)
+matplotlib==3.8.4
+
+# Server dependencies
+fastapi>=0.110.0
+uvicorn>=0.29.0
+
+# Docker SDK (for local testing)
+docker==7.1.0
+
+# Development and testing
+pytest==8.3.4
+pytest-asyncio==0.24.0

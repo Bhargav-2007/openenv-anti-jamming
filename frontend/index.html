@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Jamming OpenEnv | AI Training Environment</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .control-group input,
+        .control-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ee5a52;
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .channel {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f0f0f0;
+            color: #999;
+            border: 2px solid transparent;
+        }
+
+        .channel:hover {
+            transform: scale(1.05);
+        }
+
+        .channel.jammed {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .channel.clear {
+            background: #51cf66;
+            color: white;
+        }
+
+        .channel.selected {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 10px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .metric {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: #999;
+            margin-bottom: 3px;
+        }
+
+        .metric-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-info {
+            background: #e7f5ff;
+            color: #0066cc;
+            border-left: 4px solid #0066cc;
+        }
+
+        .alert-success {
+            background: #d3f9d8;
+            color: #2f7c31;
+            border-left: 4px solid #2f7c31;
+        }
+
+        .alert-warning {
+            background: #fff3bf;
+            color: #b8860b;
+            border-left: 4px solid #b8860b;
+        }
+
+        .alert-error {
+            background: #ffe0e0;
+            color: #cc0000;
+            border-left: 4px solid #cc0000;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .grid-2col {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛰️ Anti-Jamming OpenEnv</h1>
+            <p>AI-Powered Wireless Communication Training Environment</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- LEFT PANEL: CONTROLS -->
+            <div class="card">
+                <h2>🎮 Session Control</h2>
+
+                <div id="alerts"></div>
+
+                <!-- Session Creation -->
+                <div class="control-group">
+                    <label for="taskSelect">Difficulty Level</label>
+                    <select id="taskSelect">
+                        <option value="easy">Easy - Basic Spot Jamming</option>
+                        <option value="medium" selected>Medium - Barrage & Sweep</option>
+                        <option value="hard">Hard - Learning Jammer</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="maxSteps">Max Steps</label>
+                    <input type="number" id="maxSteps" value="50" min="10" max="500">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" id="createBtn" onclick="createSession()">Create Session</button>
+                    <button class="btn-secondary" id="resetBtn" onclick="resetSession()" disabled>Reset Episode</button>
+                </div>
+
+                <!-- Agent Controls -->
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                    <h3 style="font-size: 1.1em; margin-bottom: 15px; color: #667eea;">📡 Transmission Parameters</h3>
+
+                    <div class="control-group">
+                        <label for="freqChannel">Frequency Channel (0-63)</label>
+                        <input type="number" id="freqChannel" value="32" min="0" max="63" disabled>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="txPower">TX Power (0-30 dBm)</label>
+                        <input type="number" id="txPower" value="15" min="0" max="30" step="0.5" disabled>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="modulation">Modulation</label>
+                        <select id="modulation" disabled>
+                            <option value="BPSK">BPSK - Robust</option>
+                            <option value="QPSK">QPSK</option>
+                            <option value="16QAM" selected>16QAM</option>
+                            <option value="64QAM">64QAM - High Rate</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="codingRate">Coding Rate</label>
+                        <select id="codingRate" disabled>
+                            <option value="1/2">1/2 - Strong</option>
+                            <option value="2/3">2/3</option>
+                            <option value="3/4" selected>3/4</option>
+                            <option value="5/6">5/6 - Weak</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="beamDir">Beam Direction (0-7)</label>
+                        <input type="number" id="beamDir" value="0" min="0" max="7" disabled>
+                    </div>
+
+                    <div class="metrics-grid" style="margin: 15px 0;">
+                        <div>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="enableFHSS" disabled>
+                                <span>Enable FHSS</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="enableDSSS" disabled>
+                                <span>Enable DSSS</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="enableNotch" disabled>
+                        <span>🔧 Enable Notch Filter</span>
+                    </label>
+
+                    <div class="button-group" style="margin-top: 15px;">
+                        <button class="btn-primary" id="stepBtn" onclick="stepEnvironment()" disabled>Step (↓)</button>
+                        <button class="btn-danger" id="closeBtn" onclick="closeSession()" disabled>Close Episode</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: VISUALIZATION -->
+            <div class="card">
+                <h2>📊 Environment State</h2>
+
+                <div class="status-bar">
+                    <div class="stat-box">
+                        <div class="stat-label">Step</div>
+                        <div class="stat-value" id="stepCounter">0/50</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Reward</div>
+                        <div class="stat-value" id="currentReward">0.00</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Reward</div>
+                        <div class="stat-value" id="totalReward">0.00</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">SINR</div>
+                        <div class="stat-value" id="sinrValue">—</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 0.95em; margin-bottom: 10px; color: #667eea;">Frequency Channels</h3>
+                    <div class="channel-grid" id="channelGrid"></div>
+                </div>
+
+                <div class="metrics-grid" style="margin-top: 15px;">
+                    <div class="metric">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value" id="successRate">0%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Throughput</div>
+                        <div class="metric-value" id="throughput">0.0 Mbps</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Energy</div>
+                        <div class="metric-value" id="energy">0.0 mJ</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Episode Status</div>
+                        <div class="metric-value" id="episodeStatus" style="color: #999;">—</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <h3 style="font-size: 0.95em; margin-bottom: 10px; color: #667eea;">Recent Observations</h3>
+                    <div id="observationBox" style="background: #f9f9f9; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.85em; max-height: 200px; overflow-y: auto; color: #555;">
+                        <span style="color: #999;">No observations yet...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="main-grid">
+            <div class="card">
+                <h2>📈 Reward Trajectory</h2>
+                <div class="chart-container">
+                    <canvas id="rewardChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📉 SINR Quality</h2>
+                <div class="chart-container">
+                    <canvas id="sinrChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- EPISODE RESULTS -->
+        <div class="card full-width" id="resultsCard" style="display: none;">
+            <h2>🏆 Episode Results</h2>
+            <div class="metrics-grid grid-2col">
+                <div class="metric">
+                    <div class="metric-label">Final Score</div>
+                    <div class="metric-value" id="finalScore">—</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Success</div>
+                    <div class="metric-value" id="finalSuccess">—</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Avg Reward</div>
+                    <div class="metric-value" id="avgReward">—</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Total Steps</div>
+                    <div class="metric-value" id="totalSteps">—</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🚀 Anti-Jamming OpenEnv v1.0 | Built with ❤️ for AI Training</p>
+        </footer>
+    </div>
+
+    <script>
+        // Global state
+        let sessionId = null;
+        let currentSession = null;
+        let rewardChart = null;
+        let sinrChart = null;
+        let chartData = { rewards: [], sinr: [], steps: [] };
+
+        // WebSocket connection (optional, for real-time updates)
+        let ws = null;
+
+        function connectWebSocket() {
+            try {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+                ws.onopen = () => console.log('WebSocket connected');
+                ws.onclose = () => {
+                    console.log('WebSocket disconnected');
+                    setTimeout(connectWebSocket, 3000);
+                };
+            } catch (e) {
+                console.warn('WebSocket not available');
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertBox = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alertBox.appendChild(alert);
+
+            setTimeout(() => alert.remove(), 4000);
+        }
+
+        async function createSession() {
+            const task = document.getElementById('taskSelect').value;
+            const maxSteps = parseInt(document.getElementById('maxSteps').value);
+
+            try {
+                const response = await fetch('/api/sessions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ task, max_steps: maxSteps })
+                });
+
+                if (!response.ok) throw new Error('Failed to create session');
+
+                const data = await response.json();
+                sessionId = data.session_id;
+
+                // Initialize session
+                await initializeSession();
+
+                showAlert(`✅ Session ${sessionId} created for ${task} difficulty`, 'success');
+                updateUI();
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function initializeSession() {
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}`);
+                if (!response.ok) throw new Error('Failed to get session');
+
+                currentSession = await response.json();
+                chartData = { rewards: [], sinr: [], steps: [] };
+                updateUI();
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function stepEnvironment() {
+            if (!sessionId) {
+                showAlert('❌ No active session', 'error');
+                return;
+            }
+
+            const action = {
+                frequency_channel: parseInt(document.getElementById('freqChannel').value),
+                tx_power_dbm: parseFloat(document.getElementById('txPower').value),
+                modulation: document.getElementById('modulation').value,
+                coding_rate: document.getElementById('codingRate').value,
+                beam_direction: parseInt(document.getElementById('beamDir').value),
+                enable_fhss: document.getElementById('enableFHSS').checked,
+                enable_dsss: document.getElementById('enableDSSS').checked,
+                enable_notch_filter: document.getElementById('enableNotch').checked
+            };
+
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}/step`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action })
+                });
+
+                if (!response.ok) throw new Error('Failed to execute step');
+
+                const result = await response.json();
+
+                // Update charts
+                chartData.rewards.push(result.reward);
+                chartData.sinr.push(result.observation?.sinr_db || 0);
+                chartData.steps.push(result.step);
+
+                // Update UI
+                document.getElementById('currentReward').textContent = result.reward.toFixed(2);
+                document.getElementById('stepCounter').textContent = `${result.step}/${document.getElementById('maxSteps').value}`;
+
+                // Update session
+                await initializeSession();
+
+                if (result.done) {
+                    showAlert('🏁 Episode complete!', 'success');
+                    document.getElementById('closeBtn').click();
+                }
+
+                updateCharts();
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function resetSession() {
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}/reset`, { method: 'POST' });
+                if (!response.ok) throw new Error('Failed to reset');
+
+                chartData = { rewards: [], sinr: [], steps: [] };
+                await initializeSession();
+                showAlert('✅ Episode reset', 'success');
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function closeSession() {
+            if (!sessionId) return;
+
+            try {
+                const response = await fetch(`/api/sessions/${sessionId}/close`, { method: 'POST' });
+                if (!response.ok) throw new Error('Failed to close session');
+
+                const results = await response.json();
+
+                // Show results
+                document.getElementById('resultsCard').style.display = 'grid';
+                document.getElementById('finalScore').textContent = results.score.toFixed(2);
+                document.getElementById('finalSuccess').textContent = results.success ? '✅ Yes' : '❌ No';
+                document.getElementById('avgReward').textContent = (results.rewards.reduce((a, b) => a + b, 0) / results.rewards.length).toFixed(2);
+                document.getElementById('totalSteps').textContent = results.steps;
+
+                sessionId = null;
+                updateUI();
+                showAlert('🏁 Episode closed', 'info');
+            } catch (error) {
+                showAlert(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function updateUI() {
+            const hasSession = sessionId !== null;
+
+            // Update button states
+            document.getElementById('createBtn').disabled = hasSession;
+            document.getElementById('resetBtn').disabled = !hasSession;
+            document.getElementById('stepBtn').disabled = !hasSession || (currentSession?.done);
+            document.getElementById('closeBtn').disabled = !hasSession;
+
+            // Update input states
+            ['freqChannel', 'txPower', 'modulation', 'codingRate', 'beamDir', 'enableFHSS', 'enableDSSS', 'enableNotch'].forEach(id => {
+                document.getElementById(id).disabled = !hasSession;
+            });
+
+            if (currentSession) {
+                document.getElementById('episodeStatus').textContent = currentSession.done ? '✓ Done' : '▶ Running';
+                document.getElementById('stepCounter').textContent = `${currentSession.step}/${currentSession.max_steps}`;
+                document.getElementById('totalReward').textContent = currentSession.cumulative_reward.toFixed(2);
+            }
+        }
+
+        function updateCharts() {
+            // Reward chart
+            if (!rewardChart) {
+                const ctx = document.getElementById('rewardChart').getContext('2d');
+                rewardChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.steps,
+                        datasets: [{
+                            label: 'Reward',
+                            data: chartData.rewards,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            } else {
+                rewardChart.data.labels = chartData.steps;
+                rewardChart.data.datasets[0].data = chartData.rewards;
+                rewardChart.update();
+            }
+
+            // SINR chart
+            if (!sinrChart) {
+                const ctx = document.getElementById('sinrChart').getContext('2d');
+                sinrChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.steps,
+                        datasets: [{
+                            label: 'SINR (dB)',
+                            data: chartData.sinr,
+                            borderColor: '#764ba2',
+                            backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            } else {
+                sinrChart.data.labels = chartData.steps;
+                sinrChart.data.datasets[0].data = chartData.sinr;
+                sinrChart.update();
+            }
+        }
+
+        // Initialize channel grid
+        function initializeChannelGrid() {
+            const grid = document.getElementById('channelGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 64; i++) {
+                const channel = document.createElement('div');
+                channel.className = 'channel';
+                channel.textContent = i;
+                channel.onclick = () => document.getElementById('freqChannel').value = i;
+                grid.appendChild(channel);
+            }
+        }
+
+        // Page load
+        window.addEventListener('load', () => {
+            initializeChannelGrid();
+            connectWebSocket();
+            updateUI();
+        });
+    </script>
+</body>
+</html>

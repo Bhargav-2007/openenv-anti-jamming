@@ -1,0 +1,29 @@
+[project]
+name = "anti-jamming-env"
+version = "1.0.0"
+description = "Anti-Jamming OpenEnv Environment"
+requires-python = ">=3.10"
+dependencies = [
+    "openenv-core>=0.2.0",
+    "numpy==1.26.4",
+    "scipy==1.13.0",
+    "pydantic==2.10.3",
+    "openai>=1.58.1",
+    "matplotlib==3.8.4",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.29.0",
+    "docker==7.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "pytest-asyncio==0.24.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

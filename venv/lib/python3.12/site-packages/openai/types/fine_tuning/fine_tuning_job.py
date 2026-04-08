@@ -4,21 +4,20 @@ from typing import List, Union, Optional
 from typing_extensions import Literal
 
 from ..._models import BaseModel
+from .dpo_method import DpoMethod
+from ..shared.metadata import Metadata
+from .supervised_method import SupervisedMethod
+from .reinforcement_method import ReinforcementMethod
 from .fine_tuning_job_wandb_integration_object import FineTuningJobWandbIntegrationObject
 
-__all__ = [
-    "FineTuningJob",
-    "Error",
-    "Hyperparameters",
-    "Method",
-    "MethodDpo",
-    "MethodDpoHyperparameters",
-    "MethodSupervised",
-    "MethodSupervisedHyperparameters",
-]
+__all__ = ["FineTuningJob", "Error", "Hyperparameters", "Method"]
 
 
 class Error(BaseModel):
+    """
+    For fine-tuning jobs that have `failed`, this will contain more information on the cause of the failure.
+    """
+
     code: str
     """A machine-readable error code."""
 
@@ -33,6 +32,11 @@ class Error(BaseModel):
 
 
 class Hyperparameters(BaseModel):
+    """The hyperparameters used for the fine-tuning job.
+
+    This value will only be returned when running `supervised` jobs.
+    """
+
     batch_size: Union[Literal["auto"], int, None] = None
     """Number of examples in each batch.
 
@@ -51,79 +55,29 @@ class Hyperparameters(BaseModel):
 
     An epoch refers to one full cycle through the training dataset.
     """
-
-
-class MethodDpoHyperparameters(BaseModel):
-    batch_size: Union[Literal["auto"], int, None] = None
-    """Number of examples in each batch.
-
-    A larger batch size means that model parameters are updated less frequently, but
-    with lower variance.
-    """
-
-    beta: Union[Literal["auto"], float, None] = None
-    """The beta value for the DPO method.
-
-    A higher beta value will increase the weight of the penalty between the policy
-    and reference model.
-    """
-
-    learning_rate_multiplier: Union[Literal["auto"], float, None] = None
-    """Scaling factor for the learning rate.
-
-    A smaller learning rate may be useful to avoid overfitting.
-    """
-
-    n_epochs: Union[Literal["auto"], int, None] = None
-    """The number of epochs to train the model for.
-
-    An epoch refers to one full cycle through the training dataset.
-    """
-
-
-class MethodDpo(BaseModel):
-    hyperparameters: Optional[MethodDpoHyperparameters] = None
-    """The hyperparameters used for the fine-tuning job."""
-
-
-class MethodSupervisedHyperparameters(BaseModel):
-    batch_size: Union[Literal["auto"], int, None] = None
-    """Number of examples in each batch.
-
-    A larger batch size means that model parameters are updated less frequently, but
-    with lower variance.
-    """
-
-    learning_rate_multiplier: Union[Literal["auto"], float, None] = None
-    """Scaling factor for the learning rate.
-
-    A smaller learning rate may be useful to avoid overfitting.
-    """
-
-    n_epochs: Union[Literal["auto"], int, None] = None
-    """The number of epochs to train the model for.
-
-    An epoch refers to one full cycle through the training dataset.
-    """
-
-
-class MethodSupervised(BaseModel):
-    hyperparameters: Optional[MethodSupervisedHyperparameters] = None
-    """The hyperparameters used for the fine-tuning job."""
 
 
 class Method(BaseModel):
-    dpo: Optional[MethodDpo] = None
+    """The method used for fine-tuning."""
+
+    type: Literal["supervised", "dpo", "reinforcement"]
+    """The type of method. Is either `supervised`, `dpo`, or `reinforcement`."""
+
+    dpo: Optional[DpoMethod] = None
     """Configuration for the DPO fine-tuning method."""
 
-    supervised: Optional[MethodSupervised] = None
-    """Configuration for the supervised fine-tuning method."""
+    reinforcement: Optional[ReinforcementMethod] = None
+    """Configuration for the reinforcement fine-tuning method."""
 
-    type: Optional[Literal["supervised", "dpo"]] = None
-    """The type of method. Is either `supervised` or `dpo`."""
+    supervised: Optional[SupervisedMethod] = None
+    """Configuration for the supervised fine-tuning method."""
 
 
 class FineTuningJob(BaseModel):
+    """
+    The `fine_tuning.job` object represents a fine-tuning job that has been created through the API.
+    """
+
     id: str
     """The object identifier, which can be referenced in the API endpoints."""
 
@@ -207,6 +161,16 @@ class FineTuningJob(BaseModel):
 
     integrations: Optional[List[FineTuningJobWandbIntegrationObject]] = None
     """A list of integrations to enable for this fine-tuning job."""
+
+    metadata: Optional[Metadata] = None
+    """Set of 16 key-value pairs that can be attached to an object.
+
+    This can be useful for storing additional information about the object in a
+    structured format, and querying for objects via API or the dashboard.
+
+    Keys are strings with a maximum length of 64 characters. Values are strings with
+    a maximum length of 512 characters.
+    """
 
     method: Optional[Method] = None
     """The method used for fine-tuning."""
