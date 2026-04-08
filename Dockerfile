@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy application code
 COPY anti_jamming_env/ ./anti_jamming_env/
-COPY api_server.py .
+COPY app.py .
 COPY frontend/ ./frontend/
 COPY inference.py .
 COPY openenv.yaml .
