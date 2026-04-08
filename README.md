@@ -4,12 +4,9 @@ emoji: 🛡️
 colorFrom: purple
 colorTo: blue
 sdk: docker
-sdk_version: latest
 app_port: 8000
 pinned: true
-short_description: AI RL environment for anti-jamming wireless communication systems
-hf_oauth: false
-disable_embedding: false
+short_description: AI RL environment for anti-jamming wireless communication training
 ---
 
 # AI-Powered Anti-Jamming Communication System

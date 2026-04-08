@@ -22,11 +22,12 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy application code
 COPY anti_jamming_env/ ./anti_jamming_env/
-COPY server.py .
+COPY api_server.py .
+COPY frontend/ ./frontend/
 COPY inference.py .
 COPY openenv.yaml .
 
-# Expose port for OpenEnv server
+# Expose port for API server
 EXPOSE 8000
 
 # Set environment variables
@@ -37,7 +38,7 @@ ENV ANTI_JAMMING_TASK=easy
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
+    CMD python -c "import requests; requests.get('http://localhost:8000/api/health')" || exit 1
 
-# Run server
-CMD ["python", "server.py"]
+# Run modern FastAPI server
+CMD ["python", "api_server.py"]
