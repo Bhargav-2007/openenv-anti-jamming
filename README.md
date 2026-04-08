@@ -1,3 +1,20 @@
+---
+title: Anti-Jamming OpenEnv
+emoji: 🛡️
+colorFrom: purple
+colorTo: blue
+sdk: docker
+app_port: 8000
+pinned: true
+short_description: AI RL environment for anti-jamming wireless communication systems
+tags:
+  - reinforcement-learning
+  - openenv
+  - wireless-communication
+  - electronic-warfare
+  - physics-simulation
+---
+
 # AI-Powered Anti-Jamming Communication System
 
 An OpenEnv reinforcement learning environment for training AI agents to maintain wireless communication links under intelligent jamming attacks. This environment simulates realistic radio frequency physics and implements sophisticated jamming strategies from electronic warfare scenarios.
