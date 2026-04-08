@@ -7,7 +7,7 @@ scipy==1.13.0
 pydantic==2.10.3
 
 # LLM integration
-openai==1.58.1
+openai>=2.7.2
 
 # Visualization (optional, for analysis)
 matplotlib==3.8.4

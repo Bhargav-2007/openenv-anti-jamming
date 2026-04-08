@@ -41,4 +41,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/api/health')" || exit 1
 
 # Run modern FastAPI server
-CMD ["python", "api_server.py"]
+CMD ["python", "app.py"]
