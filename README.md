@@ -5,8 +5,6 @@ colorFrom: purple
 colorTo: blue
 sdk: docker
 app_port: 8000
-pinned: true
-short_description: AI RL environment for anti-jamming wireless communication training
 ---
 
 # AI-Powered Anti-Jamming Communication System
