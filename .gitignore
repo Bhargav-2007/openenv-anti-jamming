@@ -6,6 +6,7 @@ __pycache__/
 
 # Virtual environments
 venv/
+.venv/
 .env
 .env.*
 
@@ -22,3 +23,6 @@ htmlcov/
 # IDE
 .vscode/
 .idea/
+
+# Locks
+uv.lock
