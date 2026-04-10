@@ -27,5 +27,4 @@ EXPOSE 7860
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import anti_jamming_env; print('ok')" || exit 1
-
 CMD ["openenv", "serve", "server.py"]

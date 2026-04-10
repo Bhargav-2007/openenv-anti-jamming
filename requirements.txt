@@ -6,5 +6,9 @@ pydantic>=2.10.0
 numpy>=1.26.0
 scipy>=1.13.0
 
+# API server
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+
 # LLM integration
 openai>=1.58.1
