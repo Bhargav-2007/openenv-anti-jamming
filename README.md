@@ -100,24 +100,6 @@ docker run -p 8000:8000 bhargav-2007/anti-jamming-env:latest
 ```bash
 openenv validate .
 ```
-import asyncio
-from anti_jamming_env import AntiJammingEnv, AntiJammingAction
-import random
-
-async def run_random_agent():
-    env = AntiJammingEnv(task="easy", max_steps=50)
-    result = await env.reset()
-    
-    total_reward = 0.0
-    
-    for step in range(50):
-        # Random action
-        action = AntiJammingAction(
-            frequency_channel=random.randint(0, 63),
-            tx_power_dbm=random.uniform(10.0, 25.0),
-            modulation=random.choice(["BPSK", "QPSK", "16QAM", "64QAM"]),
-            coding_rate=random.choice(["1/2", "2/3", "3/4", "5/6"]),
-            beam_direction=random.randint(0, 7),
             enable_fhss=random.choice([True, False]),
             enable_dsss=False,
             enable_notch_filter=True
