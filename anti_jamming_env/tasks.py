@@ -19,7 +19,7 @@ class TaskConfig(BaseModel):
     )
     grading_weights: Dict[str, float] = Field(
         default_factory=dict,
-        description="Weights used by the deterministic grader"
+        description="Weights used by the deterministic grader",
     )
 
 

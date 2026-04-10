@@ -12,6 +12,8 @@ COPY anti_jamming_env/ ./anti_jamming_env/
 COPY server.py ./server.py
 COPY openenv.yaml ./openenv.yaml
 COPY inference.py ./inference.py
+COPY pyproject.toml ./pyproject.toml
+COPY README.md ./README.md
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1

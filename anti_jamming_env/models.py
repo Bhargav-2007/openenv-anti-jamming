@@ -9,10 +9,6 @@ from pydantic import BaseModel, Field
 from openenv.core import Action, Observation, State
 
 
-# ═══════════════════════════════════════════════════════════════════
-# ACTION MODEL - What the agent can do
-# ═══════════════════════════════════════════════════════════════════
-
 class AntiJammingAction(Action):
     """
     Agent's action in the anti-jamming communication system.
@@ -72,10 +68,6 @@ class AntiJammingAction(Action):
         description="Enable adaptive notch filtering",
     )
 
-
-# ═══════════════════════════════════════════════════════════════════
-# OBSERVATION MODEL - What the agent sees
-# ═══════════════════════════════════════════════════════════════════
 
 class ChannelState(BaseModel):
     """Current state of the wireless channel for each frequency."""
@@ -157,10 +149,6 @@ class AntiJammingObservation(Observation):
     task_description: str = Field(..., description="Human-readable task goal")
 
 
-# ═══════════════════════════════════════════════════════════════════
-# STATE MODEL - Complete internal state (for render / debugging)
-# ═══════════════════════════════════════════════════════════════════
-
 class AntiJammingState(State):
     """
     Complete internal state of the environment.
@@ -210,14 +198,9 @@ class AntiJammingState(State):
     )
     reward_history: List[float] = Field(
         default_factory=list,
-<<<<<<< HEAD
         description="History of rewards received",
-=======
-        description="History of rewards received"
     )
-
     sinr_history: List[float] = Field(
         default_factory=list,
-        description="History of per-step SINR values"
->>>>>>> 5242213f (Changes)
+        description="History of per-step SINR values",
     )

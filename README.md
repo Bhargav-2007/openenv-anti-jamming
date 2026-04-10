@@ -26,14 +26,14 @@ The agent selects transmission parameters:
 
 ```python
 class AntiJammingAction(BaseModel):
-        frequency_channel: int  # 0-63
-        tx_power_dbm: float      # 0.0-30.0
-        modulation: str          # BPSK, QPSK, 16QAM, 64QAM
-        coding_rate: str         # 1/2, 2/3, 3/4, 5/6
-        beam_direction: int      # 0-7
-        enable_fhss: bool        # frequency hopping
-        enable_dsss: bool        # direct sequence spread spectrum
-        enable_notch_filter: bool
+    frequency_channel: int  # 0-63
+    tx_power_dbm: float      # 0.0-30.0
+    modulation: str          # BPSK, QPSK, 16QAM, 64QAM
+    coding_rate: str         # 1/2, 2/3, 3/4, 5/6
+    beam_direction: int      # 0-7
+    enable_fhss: bool        # frequency hopping
+    enable_dsss: bool        # direct sequence spread spectrum
+    enable_notch_filter: bool
 ```
 
 ## Observation Space

@@ -1,7 +1,8 @@
 # Core OpenEnv framework with CLI for validation
 openenv-core[cli]>=0.4.0
 
-# Numerics / physics simulation
+# Data and physics
+pydantic>=2.10.0
 numpy>=1.26.0
 scipy>=1.13.0
 

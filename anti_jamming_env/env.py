@@ -10,6 +10,7 @@ import numpy as np
 
 from openenv.core import Environment
 
+from anti_jamming_env.graders import grade_episode
 from anti_jamming_env.models import (
     AntiJammingAction,
     AntiJammingObservation,
@@ -55,7 +56,7 @@ class AntiJammingEnv(
         Initialise the anti-jamming environment.
 
         Args:
-            task: Task difficulty – one of "easy", "medium", "hard".
+            task: Task difficulty - one of "easy", "medium", "hard".
             max_steps: Maximum steps per episode.
             num_channels: Number of frequency channels available.
             random_seed: Random seed for reproducibility.
@@ -111,21 +112,17 @@ class AntiJammingEnv(
         self.recent_sinr: List[float] = []
         self.action_history: List[Dict] = []
         self.reward_history: List[float] = []
-<<<<<<< HEAD
-
-=======
         self.sinr_history: List[float] = []
-        
->>>>>>> 5242213f (Changes)
+
         # Last transmission results
         self.last_transmission_success: bool = False
         self.last_sinr_db: float = 0.0
         self.last_throughput_mbps: float = 0.0
         self.last_energy_mj: float = 0.0
 
-    # ═══════════════════════════════════════════════════════════════
+    # =================================================================
     # OPENENV REQUIRED INTERFACE
-    # ═══════════════════════════════════════════════════════════════
+    # =================================================================
 
     def reset(
         self,
@@ -173,12 +170,8 @@ class AntiJammingEnv(
         self.recent_sinr = []
         self.action_history = []
         self.reward_history = []
-<<<<<<< HEAD
-
-=======
         self.sinr_history = []
-        
->>>>>>> 5242213f (Changes)
+
         # Reset last transmission
         self.last_transmission_success = True
         self.last_sinr_db = 15.0
@@ -211,7 +204,7 @@ class AntiJammingEnv(
 
         self._step_count += 1
 
-        # ── 1. Agent transmits ──────────────────────────────────────
+        # 1. Agent transmits
         freq_ch = action.frequency_channel
         tx_power = action.tx_power_dbm
         modulation = action.modulation
@@ -220,14 +213,14 @@ class AntiJammingEnv(
         self.current_frequency = freq_ch
         self.current_tx_power = tx_power
 
-        # ── 2. Jammer attacks ───────────────────────────────────────
+        # 2. Jammer attacks
         self.jammer.observe_transmission(freq_ch, tx_power)
         self.jammer.step()
 
         interference_spectrum = self.jammer.get_interference_spectrum()
         interference_power_dbm = interference_spectrum.get(freq_ch, -150.0)
 
-        # ── 3. Wireless physics ─────────────────────────────────────
+        # 3. Wireless physics
         sinr_db, _ = self.channel.calculate_sinr(
             tx_power_dbm=tx_power,
             channel_idx=freq_ch,
@@ -254,7 +247,7 @@ class AntiJammingEnv(
             transmission_duration_ms=1.0,
         )
 
-        # ── 4. Update statistics ─────────────────────────────────────
+        # 4. Update statistics
         if tx_success:
             self.successful_transmissions += 1
         else:
@@ -275,7 +268,7 @@ class AntiJammingEnv(
         self.last_throughput_mbps = actual_throughput
         self.last_energy_mj = energy_mj
 
-        # ── 5. Dense reward ─────────────────────────────────────────
+        # 5. Dense reward
         reward = self._calculate_reward(
             tx_success=tx_success,
             sinr_db=sinr_db,
@@ -286,10 +279,10 @@ class AntiJammingEnv(
         self.total_reward += reward
         self.reward_history.append(reward)
 
-        # ── 6. Termination ───────────────────────────────────────────
+        # 6. Termination
         self._done = self._step_count >= self.max_steps
 
-        # ── 7. Record action ────────────────────────────────────────
+        # 7. Record action
         self.action_history.append(action.model_dump())
 
         obs = self._build_observation(reward=reward, done=self._done)
@@ -333,28 +326,22 @@ class AntiJammingEnv(
             jammer_strategy=self.jammer.jammer_type.value,
             successful_transmissions=self.successful_transmissions,
             failed_transmissions=self.failed_transmissions,
-<<<<<<< HEAD
             total_reward_accumulated=round(self.total_reward, 4),
             action_history=list(self.action_history),
             reward_history=list(self.reward_history),
-=======
-            total_reward_accumulated=self.total_reward,
-            action_history=self.action_history,
-            reward_history=self.reward_history,
-            sinr_history=self.sinr_history,
->>>>>>> 5242213f (Changes)
+            sinr_history=list(self.sinr_history),
         )
 
-    # ═══════════════════════════════════════════════════════════════
+    # =================================================================
     # GRADING HELPER
-    # ═══════════════════════════════════════════════════════════════
+    # =================================================================
 
     def grade(self) -> tuple:
         """
         Grade the current episode using the task grader.
 
         Returns:
-            (final_score, component_scores) – score in [0.0, 1.0].
+            (final_score, component_scores) - score in [0.0, 1.0].
         """
         return grade_episode(
             task_config=self.task_config,
@@ -366,9 +353,9 @@ class AntiJammingEnv(
             max_steps=self.max_steps,
         )
 
-    # ═══════════════════════════════════════════════════════════════
+    # =================================================================
     # PRIVATE HELPERS
-    # ═══════════════════════════════════════════════════════════════
+    # =================================================================
 
     def _build_observation(
         self, reward: float, done: bool
@@ -456,7 +443,7 @@ class AntiJammingEnv(
         """
         reward = 0.0
 
-        # Throughput (primary objective) – normalised to ~0..1 range
+        # Throughput (primary objective) - normalised to ~0..1 range
         reward += throughput_mbps / 100.0
 
         # Energy efficiency penalty
