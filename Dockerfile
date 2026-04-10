@@ -16,12 +16,12 @@ COPY inference.py ./inference.py
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV OPENENV_HOST=0.0.0.0
-ENV OPENENV_PORT=8000
+ENV OPENENV_PORT=7860
 ENV ANTI_JAMMING_TASK=easy
 
 USER openenv
 
-EXPOSE 8000
+EXPOSE 7860
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import anti_jamming_env; print('ok')" || exit 1
