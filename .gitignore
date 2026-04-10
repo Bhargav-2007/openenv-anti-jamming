@@ -3,10 +3,15 @@ __pycache__/
 *.py[cod]
 *.so
 .Python
+*.pyc
+*.pyo
+*.pyd
 
 # Virtual environments
 venv/
 .venv/
+env/
+ENV/
 .env
 .env.*
 
@@ -23,6 +28,11 @@ htmlcov/
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
 
 # Locks
 uv.lock
