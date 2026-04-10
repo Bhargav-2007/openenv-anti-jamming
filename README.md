@@ -1,203 +1,105 @@
 ---
 title: Anti-Jamming OpenEnv
-emoji: 🛡️
-colorFrom: purple
-colorTo: blue
+emoji: shield
+colorFrom: blue
+colorTo: gray
 sdk: docker
 app_port: 8000
 ---
 
-# AI-Powered Anti-Jamming Communication System
+# Anti-Jamming Communication System (OpenEnv)
 
-An OpenEnv reinforcement learning environment for training AI agents to maintain wireless communication links under intelligent jamming attacks. This environment simulates realistic radio frequency physics and implements sophisticated jamming strategies from electronic warfare scenarios.
+This environment simulates a real-world wireless link under intelligent jamming. Agents learn to select transmission parameters that maximize throughput while avoiding interference. The environment is OpenEnv-compliant and provides `reset()`, `step()`, and `state()` with typed Pydantic models.
 
-## 🚀 Quick Start (3 Steps)
+## Environment Summary
 
-```bash
-# 1. Install dependencies
-pip install -r requirements.txt
+Key features:
+- Realistic RF physics (path loss, fading, noise, interference)
+- Multiple jammer behaviors (spot, sweep, barrage, reactive, learning)
+- Dense reward signals for throughput and efficiency
+- Deterministic graders for reproducible scoring
+- Three tasks: easy, medium, hard
 
-# 2. Run with web frontend
-python api_server.py
+## Action Space
 
-# 3. Open http://localhost:8000
+The agent selects transmission parameters:
+
+```python
+class AntiJammingAction(BaseModel):
+        frequency_channel: int  # 0-63
+        tx_power_dbm: float      # 0.0-30.0
+        modulation: str          # BPSK, QPSK, 16QAM, 64QAM
+        coding_rate: str         # 1/2, 2/3, 3/4, 5/6
+        beam_direction: int      # 0-7
+        enable_fhss: bool        # frequency hopping
+        enable_dsss: bool        # direct sequence spread spectrum
+        enable_notch_filter: bool
 ```
 
-That's it! Try the interactive dashboard with professional UI featuring real-time visualization and live episode training.
+## Observation Space
 
----
+The environment returns:
+- Channel states for 16 representative frequencies
+- Jammer detection and estimated power
+- Last transmission success, throughput, and energy
+- Recent success rate and average SINR
 
-## Overview
+## Reward Function
 
-In contested electromagnetic environments, maintaining reliable communication requires adaptive strategies to combat intelligent jamming. This environment challenges AI agents to learn real-world anti-jamming techniques through interaction with a physics-based wireless channel simulator.
-
-**Key Features:**
-- 🎨 **Professional Web Frontend** - Real-time visualization dashboard
-- ✨ **Realistic RF Physics** - Path loss, fading, interference, SINR calculations
-- 🧠 **Multiple Jamming Strategies** - Spot, barrage, sweep, reactive, learning-based
-- 📊 **Dense Reward Signals** - For effective RL training
-- 🏆 **Three Difficulty Levels** - Beginner to advanced
-- 📡 **Standard OpenEnv API** - step() / reset() / state()
-- 🔗 **REST API** - For remote agents
-- 🐳 **Docker Ready** - Easy deployment
-- Realistic RF physics (path loss, fading, interference, SINR calculations)
-- Multiple jamming strategies (spot, barrage, sweep, reactive, learning-based)
-- Three difficulty levels with increasing sophistication
-- Dense reward signals for learning progression
-- Deterministic grading system for reproducible evaluation
-
-## Environment Details
-
-### Action Space
-
-The agent controls a wireless transmitter with the following parameters:
-
-| Parameter | Type | Range | Description |
-|-----------|------|-------|-------------|
-| `frequency_channel` | int | 0-63 | Which frequency channel to use |
-| `tx_power_dbm` | float | 0.0-30.0 | Transmit power in dBm |
-| `modulation` | enum | BPSK, QPSK, 16QAM, 64QAM | Modulation scheme (trade-off: robustness vs data rate) |
-| `coding_rate` | enum | 1/2, 2/3, 3/4, 5/6 | Error correction strength |
-| `beam_direction` | int | 0-7 | Spatial beam direction |
-| `enable_fhss` | bool | - | Enable frequency hopping |
-| `enable_dsss` | bool | - | Enable direct sequence spread spectrum |
-| `enable_notch_filter` | bool | - | Enable adaptive interference filtering |
-
-### Observation Space
-
-The agent receives:
-
-**Channel States** (16 representative channels):
-- Signal-to-Noise Ratio (SNR)
-- Signal-to-Interference-plus-Noise Ratio (SINR)
-- Interference power detected
-- Packet error rate
-- Jamming status
-
-**Jammer Intelligence:**
-- Detected jammer type and pattern
-- Estimated jammer power and bandwidth
-- Center frequency of attack
-
-**Performance Metrics:**
-- Recent transmission success rate
-- Average SINR over last 5 steps
-- Throughput and energy consumption
-
-### Reward Function
-
-The reward combines multiple objectives:
-Components:
-- **Throughput**: Primary objective, normalized to approximately 0-1
-- **Energy Cost**: Penalty for excessive power consumption
-- **Success Bonus**: Plus one for successful transmission, minus 0.5 for failure
-- **SINR Bonus**: Quality incentive for maintaining good signal quality
-- **Technique Bonus**: Encourages using anti-jamming features
-
-Range: approximately minus two to plus five per step
+Dense reward combines:
+- Throughput (primary objective)
+- Energy efficiency penalty
+- Success bonus / failure penalty
+- SINR quality bonus
+- Anti-jam technique bonus
 
 ## Tasks
 
-### Easy: Basic Defense
+Each task has a deterministic grader with score in [0.0, 1.0].
 
-**Objective**: Defend against simple spot jamming attack  
-**Jammer**: Fixed single-frequency constant jamming  
-**Target**: Eighty percent transmission success rate  
-**Recommended Techniques**: Basic frequency hopping, power control  
+- Easy: spot jammer, success threshold 0.70
+- Medium: barrage or sweep jammer, success threshold 0.60
+- Hard: learning jammer, success threshold 0.50
 
-**Success Criteria:**
-- Success rate greater than or equal to eighty percent
-- Average SINR greater than or equal to twelve dB
-- Cumulative throughput greater than or equal to forty Mbps
-- Energy consumption less than five hundred mJ
-
-### Medium: Adaptive Defense
-
-**Objective**: Handle barrage and sweep jamming  
-**Jammer**: Multi-frequency attacks with sweeping patterns  
-**Target**: Seventy percent transmission success rate  
-**Recommended Techniques**: Adaptive hopping, beamforming, notch filters  
-
-**Success Criteria:**
-- Success rate greater than or equal to seventy percent
-- Average SINR greater than or equal to ten dB
-- Cumulative throughput greater than or equal to thirty Mbps
-- Energy consumption less than six hundred mJ
-
-### Hard: Sophisticated Defense
-
-**Objective**: Survive intelligent learning jammer  
-**Jammer**: Learns agent patterns and predicts next moves  
-**Target**: Sixty percent transmission success rate  
-**Recommended Techniques**: Game-theoretic strategies, randomization, full anti-jam arsenal  
-
-**Success Criteria:**
-- Success rate greater than or equal to sixty percent
-- Average SINR greater than or equal to eight dB
-- Cumulative throughput greater than or equal to twenty Mbps
-- Energy consumption less than seven hundred mJ
-
-## Installation and Setup
-
-### Local Development (GitHub Codespaces)
+## Setup
 
 ```bash
-# Clone repository
-git clone https://github.com/Bhargav-2007/openenv-anti-jamming.git
-cd openenv-anti-jamming
-
-# Create virtual environment
 python3 -m venv venv
 source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Set environment variables
-export HF_TOKEN="your_huggingface_token"
-export API_BASE_URL="https://router.huggingface.co/v1"
-export MODEL_NAME="Qwen/Qwen2.5-72B-Instruct"
-```
-
-### Docker Deployment
-
-```bash
-# Build Docker image
-docker build -t bhargav-2007/anti-jamming-env:latest .
-
-# Run container
-docker run -p 8000:8000 \
-  -e HF_TOKEN="your_token" \
-  bhargav-2007/anti-jamming-env:latest
-
-# Test health endpoint
-curl http://localhost:8000/health
 ```
 
 ## Running Baseline Inference
 
-The baseline inference script demonstrates performance across all three tasks:
-
 ```bash
-# Run all tasks
+export HF_TOKEN="your_hf_token"
+export API_BASE_URL="https://router.huggingface.co/v1"
+export MODEL_NAME="Qwen/Qwen2.5-72B-Instruct"
+export ANTI_JAMMING_TASK="easy"
 python inference.py
-
-# Run specific task
-ANTI_JAMMING_TASK=easy python inference.py
-ANTI_JAMMING_TASK=medium python inference.py
-ANTI_JAMMING_TASK=hard python inference.py
 ```
 
-**Expected Baseline Scores** (with Qwen2.5-72B-Instruct):
-- Easy: approximately 0.65
-- Medium: approximately 0.45
-- Hard: approximately 0.30
+The script prints only `[START]`, `[STEP]`, and `[END]` lines to stdout.
 
-## Example Usage
+## Baseline Scores
 
-### Random Agent
+Baseline scores depend on the model and prompt. Example targets:
+- Easy: 0.70
+- Medium: 0.60
+- Hard: 0.50
 
-```python
+## Docker
+
+```bash
+docker build -t bhargav-2007/anti-jamming-env:latest .
+docker run -p 8000:8000 bhargav-2007/anti-jamming-env:latest
+```
+
+## Validation
+
+```bash
+openenv validate .
+```
 import asyncio
 from anti_jamming_env import AntiJammingEnv, AntiJammingAction
 import random

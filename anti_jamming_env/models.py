@@ -210,5 +210,14 @@ class AntiJammingState(State):
     )
     reward_history: List[float] = Field(
         default_factory=list,
+<<<<<<< HEAD
         description="History of rewards received",
+=======
+        description="History of rewards received"
+    )
+
+    sinr_history: List[float] = Field(
+        default_factory=list,
+        description="History of per-step SINR values"
+>>>>>>> 5242213f (Changes)
     )

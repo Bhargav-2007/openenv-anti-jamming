@@ -20,7 +20,6 @@ from anti_jamming_env.models import (
 from anti_jamming_env.physics import WirelessChannel
 from anti_jamming_env.jammers import create_jammer, Jammer
 from anti_jamming_env.tasks import TASKS, TaskConfig
-from anti_jamming_env.graders import grade_episode
 
 
 class AntiJammingEnv(
@@ -112,7 +111,12 @@ class AntiJammingEnv(
         self.recent_sinr: List[float] = []
         self.action_history: List[Dict] = []
         self.reward_history: List[float] = []
+<<<<<<< HEAD
 
+=======
+        self.sinr_history: List[float] = []
+        
+>>>>>>> 5242213f (Changes)
         # Last transmission results
         self.last_transmission_success: bool = False
         self.last_sinr_db: float = 0.0
@@ -169,7 +173,12 @@ class AntiJammingEnv(
         self.recent_sinr = []
         self.action_history = []
         self.reward_history = []
+<<<<<<< HEAD
 
+=======
+        self.sinr_history = []
+        
+>>>>>>> 5242213f (Changes)
         # Reset last transmission
         self.last_transmission_success = True
         self.last_sinr_db = 15.0
@@ -256,6 +265,7 @@ class AntiJammingEnv(
 
         self.recent_success.append(tx_success)
         self.recent_sinr.append(sinr_db)
+        self.sinr_history.append(sinr_db)
         if len(self.recent_success) > 5:
             self.recent_success.pop(0)
             self.recent_sinr.pop(0)
@@ -323,9 +333,16 @@ class AntiJammingEnv(
             jammer_strategy=self.jammer.jammer_type.value,
             successful_transmissions=self.successful_transmissions,
             failed_transmissions=self.failed_transmissions,
+<<<<<<< HEAD
             total_reward_accumulated=round(self.total_reward, 4),
             action_history=list(self.action_history),
             reward_history=list(self.reward_history),
+=======
+            total_reward_accumulated=self.total_reward,
+            action_history=self.action_history,
+            reward_history=self.reward_history,
+            sinr_history=self.sinr_history,
+>>>>>>> 5242213f (Changes)
         )
 
     # ═══════════════════════════════════════════════════════════════

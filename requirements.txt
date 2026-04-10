@@ -1,9 +1,19 @@
+<<<<<<< HEAD
 # OpenEnv framework (includes FastAPI, uvicorn, pydantic, websockets)
 openenv-core[cli]>=0.2.3
+=======
+# Core OpenEnv framework with CLI for validation
+openenv-core[cli]>=0.4.0
+>>>>>>> 5242213f (Changes)
 
 # Numerics / physics simulation
 numpy>=1.26.0
 scipy>=1.13.0
 
+<<<<<<< HEAD
 # LLM client (inference.py)
 openai>=1.58.0
+=======
+# LLM integration
+openai>=1.58.1
+>>>>>>> 5242213f (Changes)

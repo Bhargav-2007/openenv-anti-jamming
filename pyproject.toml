@@ -6,10 +6,18 @@ readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 dependencies = [
+<<<<<<< HEAD
     "openenv-core[cli]>=0.2.3",
     "numpy>=1.26.0",
     "scipy>=1.13.0",
     "openai>=1.58.0",
+=======
+    "openenv-core[cli]>=0.4.0",
+    "numpy==1.26.4",
+    "scipy==1.13.0",
+    "pydantic==2.10.3",
+    "openai>=1.58.1",
+>>>>>>> 5242213f (Changes)
 ]
 
 [project.optional-dependencies]
@@ -17,9 +25,6 @@ dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.24.0",
 ]
-
-[project.scripts]
-server = "server.app:main"
 
 [build-system]
 requires = ["hatchling"]

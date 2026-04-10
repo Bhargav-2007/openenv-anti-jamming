@@ -1,160 +1,59 @@
-# OpenEnv Environment Metadata
-# Anti-Jamming Communication System
-
-name: anti-jamming-comm
-version: 1.0.0
+name: anti-jamming-env
+display_name: "Anti-Jamming Communication System"
+version: "1.0.0"
 description: |
-  AI-powered anti-jamming wireless communication system where agents learn
-  to maintain communication links under intelligent jamming attacks.
-  
-  The environment simulates realistic RF physics including path loss, fading,
-  interference, and various jamming strategies from simple spot jamming to
-  sophisticated learning-based attacks.
-
-author: Bhargav-2007
-email: bhargav.umetiya@gmail.com
-license: MIT
-
-# Environment specification
-framework: openenv
-api_version: "1.0"
-
-# Docker configuration
-docker:
-  image: bhargav-2007/anti-jamming-env:latest
-  base_image: python:3.11-slim
-  port: 8000
-
-# Task definitions
-tasks:
-  - name: easy
-    description: Defend against basic spot jamming using frequency hopping
-    difficulty: beginner
-    max_steps: 50
-    
-  - name: medium
-    description: Handle barrage and sweep jamming with adaptive techniques
-    difficulty: intermediate
-    max_steps: 50
-    
-  - name: hard
-    description: Survive intelligent learning jammer with game-theoretic strategies
-    difficulty: advanced
-    max_steps: 50
-
-# Action space definition
-action_space:
-  type: structured
-  schema:
-    frequency_channel:
-      type: integer
-      min: 0
-      max: 63
-      description: Frequency channel index (0-63)
-    
-    tx_power_dbm:
-      type: float
-      min: 0.0
-      max: 30.0
-      description: Transmit power in dBm
-    
-    modulation:
-      type: enum
-      values: [BPSK, QPSK, 16QAM, 64QAM]
-      description: Modulation scheme
-    
-    coding_rate:
-      type: enum
-      values: ["1/2", "2/3", "3/4", "5/6"]
-      description: Forward error correction rate
-    
-    beam_direction:
-      type: integer
-      min: 0
-      max: 7
-      description: Beam direction for spatial filtering
-    
-    enable_fhss:
-      type: boolean
-      description: Enable frequency hopping spread spectrum
-    
-    enable_dsss:
-      type: boolean
-      description: Enable direct sequence spread spectrum
-    
-    enable_notch_filter:
-      type: boolean
-      description: Enable adaptive notch filtering
-
-# Observation space definition
-observation_space:
-  type: structured
-  description: Channel states, jammer intelligence, and performance metrics
-  
-# Reward structure
-reward:
-  type: dense
-  range: [-2.0, 5.0]
-  description: |
-    Composite reward based on:
-    - Throughput (primary objective)
-    - Energy efficiency
-    - Transmission success
-    - SINR quality
-    - Anti-jamming technique usage
-
-# Performance metrics
-metrics:
-  - name: success_rate
-    description: Transmission success rate
-    target: 0.80  # for easy task
-    
-  - name: avg_sinr_db
-    description: Average signal-to-interference-plus-noise ratio
-    target: 12.0  # for easy task
-    
-  - name: throughput_mbps
-    description: Cumulative throughput in Mbps
-    target: 40.0  # for easy task
-    
-  - name: energy_efficiency
-    description: Energy consumed per successful transmission
-    unit: mJ/packet
-
-# Tags for discovery
+  Realistic wireless communication environment where agents learn to maintain
+  reliable links under intelligent jamming attacks. Includes path loss,
+  fading, interference modeling, and adaptive jammers.
+license: "MIT"
+author:
+  name: "Bhargav-2007"
+  github: "https://github.com/Bhargav-2007"
+repository:
+  github: "https://github.com/Bhargav-2007/openenv-anti-jamming"
 tags:
   - wireless-communications
   - anti-jamming
   - cognitive-radio
-  - spectrum-warfare
-  - rf-engineering
-  - game-theory
+  - spectrum-sensing
   - real-world
-  - physics-based
 
-# Domain classification
-domain: wireless-communications
-subdomain: electronic-warfare
+environment:
+  entry_point: "server.py"
+  action_space: "anti_jamming_env.models.AntiJammingAction"
+  observation_space: "anti_jamming_env.models.AntiJammingObservation"
+  state_space: "anti_jamming_env.models.AntiJammingState"
 
-# Evaluation
-evaluation:
-  baseline_script: inference.py
-  baseline_model: Qwen/Qwen2.5-72B-Instruct
-  baseline_scores:
-    easy: 0.65
-    medium: 0.45
-    hard: 0.30
+tasks:
+  - name: "easy"
+    description: "Defend against basic spot jamming with frequency hopping"
+    difficulty: "easy"
+    max_steps: 50
+    success_threshold: 0.70
 
-# Dependencies
-dependencies:
-  - numpy>=1.26.0
-  - scipy>=1.13.0
-  - pydantic>=2.10.0
-  - openai>=1.58.0
+  - name: "medium"
+    description: "Handle barrage and sweep jamming with adaptive strategies"
+    difficulty: "medium"
+    max_steps: 50
+    success_threshold: 0.60
 
-# Additional resources
-resources:
-  documentation: README.md
-  examples:
-    - examples/random_agent.py
-    - examples/heuristic_agent.py
+  - name: "hard"
+    description: "Survive intelligent learning jammer with randomized policies"
+    difficulty: "hard"
+    max_steps: 50
+    success_threshold: 0.50
+
+runtime:
+  python_version: "3.11"
+  docker_image: "bhargav-2007/anti-jamming-env:latest"
+  cpu_cores: 2
+  memory_gb: 8
+  gpu_required: false
+
+baseline:
+  script: "inference.py"
+  model: "Qwen/Qwen2.5-72B-Instruct"
+  scores:
+    easy: 0.70
+    medium: 0.60
+    hard: 0.50
