@@ -11,6 +11,7 @@ import numpy as np
 
 class ModulationScheme(Enum):
     """Modulation schemes with bits per symbol."""
+
     BPSK = 1
     QPSK = 2
     QAM16 = 4
@@ -252,25 +253,3 @@ class WirelessChannel:
         energy_mj = energy_j * 1000
 
         return energy_mj
-
-
-# Utility functions
-
-def dbm_to_watts(dbm: float) -> float:
-    """Convert dBm to Watts."""
-    return 10 ** ((dbm - 30) / 10)
-
-
-def watts_to_dbm(watts: float) -> float:
-    """Convert Watts to dBm."""
-    return 10 * np.log10(watts) + 30
-
-
-def db_to_linear(db: float) -> float:
-    """Convert dB to linear scale."""
-    return 10 ** (db / 10)
-
-
-def linear_to_db(linear: float) -> float:
-    """Convert linear to dB scale."""
-    return 10 * np.log10(linear + 1e-10)

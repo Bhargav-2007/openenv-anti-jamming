@@ -1,14 +1,5 @@
 """
 OpenEnv server entry-point for the Anti-Jamming environment.
-
-Starts a FastAPI application (provided by openenv-core) that exposes the
-standard OpenEnv WebSocket / REST API on the configured host and port.
-
-Environment variables:
-    OPENENV_HOST           Bind address (default: 0.0.0.0)
-    OPENENV_PORT           TCP port      (default: 8000)
-    ANTI_JAMMING_TASK      Task name     (default: easy)
-    ENABLE_WEB_INTERFACE   Set "true" to enable the optional Gradio UI
 """
 
 import os
@@ -28,7 +19,6 @@ if _TASK_NAME not in TASKS:
 
 
 def _make_env() -> AntiJammingEnv:
-    """Factory called by openenv-core for each new session."""
     return AntiJammingEnv(task=_TASK_NAME)
 
 
@@ -41,7 +31,6 @@ app = create_app(
 
 
 def main() -> None:
-    """Start the OpenEnv server (used by [project.scripts] and Docker CMD)."""
     host = os.getenv("OPENENV_HOST", "0.0.0.0")
     port = int(os.getenv("OPENENV_PORT", "8000"))
     uvicorn.run(app, host=host, port=port, log_level="info")

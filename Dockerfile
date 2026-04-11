@@ -17,14 +17,18 @@ COPY README.md ./README.md
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV API_BASE_URL=https://router.huggingface.co/v1
+ENV MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
+ENV HF_TOKEN=
 ENV OPENENV_HOST=0.0.0.0
-ENV OPENENV_PORT=7860
+ENV OPENENV_PORT=8000
 ENV ANTI_JAMMING_TASK=easy
 
 USER openenv
 
-EXPOSE 7860
+EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import anti_jamming_env; print('ok')" || exit 1
+
 CMD ["openenv", "serve", "server.py"]
