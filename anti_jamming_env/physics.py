@@ -11,7 +11,6 @@ import numpy as np
 
 class ModulationScheme(Enum):
     """Modulation schemes with bits per symbol."""
-
     BPSK = 1
     QPSK = 2
     QAM16 = 4
