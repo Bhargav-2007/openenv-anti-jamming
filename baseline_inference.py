@@ -13,7 +13,9 @@ from anti_jamming_env.graders import grade_episode
 
 
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4.1-mini")
+HF_TOKEN = os.getenv("HF_TOKEN", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "") or HF_TOKEN
 
 
 def _fallback_action(obs: Dict[str, Any]) -> Dict[str, Any]:
@@ -43,7 +45,7 @@ def _llm_action(obs: Dict[str, Any]) -> Dict[str, Any]:
         "beam_direction, enable_fhss, enable_dsss, enable_notch_filter."
     )
     response = client.responses.create(
-        model="gpt-4.1-mini",
+        model=MODEL_NAME,
         input=[{"role": "user", "content": prompt + "\nObservation: " + json.dumps(obs)}],
         temperature=0.0,
     )

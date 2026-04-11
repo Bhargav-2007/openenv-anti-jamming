@@ -17,7 +17,7 @@ from anti_jamming_env.tasks import TASKS
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 HF_TOKEN = os.getenv("HF_TOKEN", "")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "") or HF_TOKEN
 
 TEMPERATURE = 0.7
 MAX_TOKENS = 200
@@ -162,8 +162,7 @@ def get_model_action(
 
 
 def run_single_task(task_name: str) -> Dict[str, Any]:
-    api_key = HF_TOKEN or OPENAI_API_KEY
-    client = OpenAI(base_url=API_BASE_URL, api_key=api_key) if api_key else None
+    client = OpenAI(base_url=API_BASE_URL, api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
     task_config = TASKS[task_name]
     env = AntiJammingEnv(task=task_name, max_steps=task_config.max_steps)
